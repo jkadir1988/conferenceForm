@@ -1,0 +1,75 @@
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-md-6 offset-md-3">
+            <h2 style="text-align:center"> Aanmeldingsformulier conferentie: </h2>
+            {{conferenceForm.value | json}}
+            <form [formGroup]="conferenceForm" (ngSubmit)="createConference()">
+                <div class="form-group">
+                    <label> Conferentie naam: </label>
+                    <input [class.is-invalid]="name.invalid && name.touched" formControlName="name" type="text" class="form-control">
+                    <!-- <small [class.d-none]="conferenceForm.valid || conferenceForm.untouched" class="redChar">Conferentie naam is verplicht</small> -->
+                    <div *ngIf="name.invalid && name.touched">
+                        <small class="redChar" *ngIf="name.errors?.required"> Conferentie naam is verplicht </small>
+                        <small class="redChar" *ngIf="name.errors?.minlength"> Conferentie naam moet minimaal drie karakters bevatten </small>
+                        <small class="redChar" *ngIf="name.errors?.forbiddenConferenceName"> Conferentie naam: "{{name.errors?.forbiddenConferenceName.value }}" is helaas niet toegestaan </small>
+                    </div>
+                    <label> Begindatum: </label>
+                    <input formControlName="startDate" type="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label> Einddatum: </label>
+                    <input formControlName="endDate" type="date" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label> Inleverdatum: </label>
+                    <input formControlName="deadlineDate" type="date" class="form-control">
+                </div>
+
+
+                <div [class.d-none]="form-group">
+                    <label> Podium naam: </label>
+                    <button type="button" class="btn btn-secondary btn-sm m-2" (click)="addAlternateStages()">Voeg
+                        nieuwe
+                        podium toe</button>
+                    <input [class.is-invalid]="stageName.invalid && stageName.touched" formControlName="stage" type="text"
+                        class="form-control">
+                    <small class="redChar" [class.d-none]="stageName.valid || stageName.untouched"> Podium naam is
+                        verplicht
+                    </small>
+                    <div formArrayName="alternateStages" *ngFor="let alternateStage of alternateStages.controls; let i = index">
+                        <label class="form-check-label"> Podium naam: </label>
+                        <input type="text" class="form-control" [formControlName]="i">
+                        <button type="button" class=" btn btn-secondary btn-sm m-2" (click)="removeAlternateStages()">Verwijderen</button>
+                    </div>
+                </div>
+
+                <!-- <div class="form-check mb-3">
+                            <input formControlName="categoryCheck" type="checkbox" class="form-check-input">
+                            <label class="form-check-label"> Vink aan als u categorie aan de conferentie wil toevoegen </label>
+                        </div> -->
+
+                <div [class.d-none]="form-group">
+                    <label> Categorie naam: </label>
+                    <button type="button" class="btn btn-secondary btn-sm m-2" (click)="addAlternateCategory()">Voeg
+                        nieuwe
+                        categorie toe</button>
+                    <input [class.is-invalid]="category.invalid && category.touched" formControlName="category" type="text"
+                        class="form-control">
+                    <small class="redChar" [class.d-none]="category.valid || category.untouched"> Categorie naam is
+                        verplicht
+                    </small>
+                    <div formArrayName="alternateCategory" *ngFor="let alternateCat of alternateCategory.controls; let i = index">
+                        <label class="form-check-label"> Categorie naam: </label>
+                        <input type="text" class="form-control" [formControlName]="i">
+                        <button type="button" class=" btn btn-secondary btn-sm m-2" (click)="removeAlternateCategory()">Verwijderen</button>
+                    </div>
+                </div>
+                <!-- [disabled]="!conferenceForm.valid" -->
+                <button [disabled]="!conferenceForm.valid" class="submitButton" type="sumbit"> Aanmaken </button>
+                <button (click)="loadApi()" class="submitButton" type="sumbit"> Load API </button>
+                <button (click)="resetApi()" class="submitButton" type="sumbit"> Reset API </button>
+            </form>
+        </div>
+    </div>
+</div>
