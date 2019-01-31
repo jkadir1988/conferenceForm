@@ -6,5 +6,4 @@ export function ConferenceDateValidator(control: AbstractControl): { [key: strin
     return conferenceStartDate && conferenceEndDate && conferenceStartDate.value != conferenceEndDate.value ?
         { 'misMatch': true } :
         null;
-
 }
