@@ -15,11 +15,8 @@ import { Time } from '@angular/common'
 export class ConferenceComponent implements OnInit {
 
   conferenceForm: FormGroup;
-
   conferences: Conference[] = [];
-
   defaultDateTime: string = "2099-01-01T01:00";
-
   dateOfToday = new Date(Date.now());
   dateOfTomorrow = new Date(this.dateOfToday.setDate(this.dateOfToday.getDate() + 1));
   selectedDate = new Date();
@@ -32,32 +29,32 @@ export class ConferenceComponent implements OnInit {
     return this.conferenceForm.get('stage');
   }
 
-  get alternateStages() {
-    return this.conferenceForm.get('alternateStages') as FormArray;
+  get alternateStagesMethod() {
+    return this.conferenceForm.get('stages') as FormArray;
   }
 
   addAlternateStages() {
-    this.alternateStages.push(this.fb.control(''));
+    this.alternateStagesMethod.push(this.fb.control(''));
   }
 
   removeAlternateStages(i: number) {
-    this.alternateStages.removeAt(i);
+    this.alternateStagesMethod.removeAt(i);
   }
 
   get category() {
     return this.conferenceForm.get('category');
   }
 
-  get alternateCategory() {
-    return this.conferenceForm.get('alternateCategory') as FormArray;
+  get alternateCategoryMethod() {
+    return this.conferenceForm.get('categories') as FormArray;
   }
 
   addAlternateCategory() {
-    this.alternateCategory.push(this.fb.control(''));
+    this.alternateCategoryMethod.push(this.fb.control(''));
   }
 
   removeAlternateCategory(i: number) {
-    this.alternateCategory.removeAt(i);
+    this.alternateCategoryMethod.removeAt(i);
   }
 
   minDateEndDate(event) {
@@ -87,10 +84,8 @@ export class ConferenceComponent implements OnInit {
       endTime: [''],
       deadlineDate: [''],
       deadlineTime: [''],
-      // stage: [''],
-      alternateStages: this.fb.array([]),
-      // category: [''],
-      alternateCategory: this.fb.array([])
+      stages: this.fb.array([]),
+      categories: this.fb.array([])
     },
       { validator: ConferenceDateValidator });
   }
@@ -98,45 +93,27 @@ export class ConferenceComponent implements OnInit {
   createConference() {
     let conference: Conference = this.conferenceForm.value;
     if (this.conferenceForm.get('startDate') != null) {
-      if (this.conferenceForm.get('startDate').value != "") {
+      if (this.conferenceForm.get('startDate').value == "" || this.conferenceForm.get('startTime').value == "") {
         conference.startDate = this.defaultDateTime;
       } else {
         conference.startDate = this.conferenceForm.get('startDate').value + "T" + this.conferenceForm.get('startTime').value;
       }
     }
     if (this.conferenceForm.get('endDate') != null) {
-      if (this.conferenceForm.get('endDate').value != "") {
+      if (this.conferenceForm.get('endDate').value == "" || this.conferenceForm.get('endTime').value == "") {
         conference.endDate = this.defaultDateTime;
       } else {
         conference.endDate = this.conferenceForm.get('endDate').value + "T" + this.conferenceForm.get('endTime').value;
       }
     }
     if (this.conferenceForm.get('deadlineDate') != null) {
-      if (this.conferenceForm.get('deadlineDate').value != "") {
+      if (this.conferenceForm.get('deadlineDate').value == "" || this.conferenceForm.get('deadlineTime').value == "") {
         conference.deadlinePresentationDraft = this.defaultDateTime;
       } else {
         conference.deadlinePresentationDraft = this.conferenceForm.get('deadlineDate').value + "T" + this.conferenceForm.get('deadlineTime').value;
       }
     }
-
-    // if (this.conferenceForm.get('startDate') == null || this.conferenceForm.get('startTime') == null) {
-    //   conference.startDate = this.defaultDateTime;
-    // } else {
-    //   conference.startDate = this.conferenceForm.get('startDate').value + "T" + this.conferenceForm.get('startTime').value;
-    // }
-    // if (this.conferenceForm.get('endDate') == null || this.conferenceForm.get('endTime') == null) {
-    //   conference.endDate = this.defaultDateTime;
-    // } else {
-    //   conference.endDate = this.conferenceForm.get('endDate').value + "T" + this.conferenceForm.get('endTime').value;
-    // }
-    // if (this.conferenceForm.get('deadlineDate') == null || this.conferenceForm.get('deadlineTime') == null) {
-    //   conference.deadlinePresentationDraft = this.defaultDateTime;
-    // } else {
-    //   conference.deadlinePresentationDraft = this.conferenceForm.get('deadlineDate').value + "T" + this.conferenceForm.get('deadlineTime').value;
-    // }
     this.addConference(conference);
-    console.log("jojo " + conference.categories);
-    console.log("hallo" + this.conferences.values);
   }
 
   addConference(conference) {
@@ -154,5 +131,13 @@ export class ConferenceComponent implements OnInit {
       deadlineDate: '2019-01-09',
       deadlineTime: '23:00',
     });
+  }
+
+  getConferences() {
+    this.conferenceService.getConferences().subscribe(conference => this.conferences = conference);
+  }
+
+  deleteConference(id: number) {
+    this.conferenceService.deleteConference(id).subscribe(conference => this.getConferences());
   }
 }
